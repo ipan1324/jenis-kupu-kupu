@@ -57,9 +57,16 @@ def load_trained_model():
     Raises:
         FileNotFoundError: Jika file model tidak ditemukan
     """
+    model_path_h5 = os.path.join(BASE_DIR, "model", "butterfly_xception.h5")
+    
+    # Cek apakah versi .h5 ada (dari download_model.py di Railway)
+    if os.path.exists(model_path_h5):
+        return load_model(model_path_h5)
+        
+    # Fallback ke versi .keras lokal
     if not os.path.exists(MODEL_PATH):
         raise FileNotFoundError(
-            f"File model tidak ditemukan: {MODEL_PATH}. "
+            f"File model tidak ditemukan di {MODEL_PATH} atau {model_path_h5}. "
             "Jalankan train.py terlebih dahulu untuk melatih model."
         )
 

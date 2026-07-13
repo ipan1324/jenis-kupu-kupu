@@ -13,7 +13,7 @@ import os
 import sys
 
 MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model")
-MODEL_PATH = os.path.join(MODEL_DIR, "butterfly_xception.keras")
+MODEL_PATH = os.path.join(MODEL_DIR, "butterfly_xception.h5")
 
 # ============================================================
 # File ID model dari Google Drive
@@ -45,11 +45,21 @@ def download_model():
 
     try:
         import gdown
-        url = f"https://drive.google.com/uc?id={MODEL_GDRIVE_FILE_ID}"
-        gdown.download(url, MODEL_PATH, quiet=False)
+        
+        # Gunakan parameter id langsung agar gdown otomatis bypass halaman virus warning
+        gdown.download(id=MODEL_GDRIVE_FILE_ID, output=MODEL_PATH, quiet=False)
 
         if os.path.exists(MODEL_PATH):
             size_mb = os.path.getsize(MODEL_PATH) / (1024 * 1024)
+            
+            # Validasi ukuran file (model Xception harusnya sekitar 86 MB)
+            # Jika kurang dari 1 MB, berarti yang terdownload adalah halaman HTML (error Google Drive)
+            if size_mb < 1.0:
+                print(f"[ERROR] Download gagal! File yang didownload terlalu kecil ({size_mb:.2f} MB).")
+                print("        Kemungkinan Google Drive memblokir download karena ukuran file besar.")
+                os.remove(MODEL_PATH)
+                sys.exit(1)
+                
             print(f"[OK] Model berhasil didownload ({size_mb:.1f} MB)")
             return True
         else:
