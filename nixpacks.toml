@@ -1,0 +1,11 @@
+# nixpacks.toml - Konfigurasi build Railway
+# Railway menggunakan Nixpacks untuk build otomatis
+
+[phases.setup]
+nixPkgs = ["python311", "gcc"]
+
+[phases.install]
+cmds = ["pip install -r requirements.txt"]
+
+[start]
+cmd = "python download_model.py && gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1"

@@ -16,5 +16,8 @@ Pillow
 numpy
 scipy
 
-# Production Server (opsional untuk deploy)
+# Production Server (Railway/Render deploy)
 gunicorn
+
+# Download model dari Google Drive (Railway deploy)
+gdown
