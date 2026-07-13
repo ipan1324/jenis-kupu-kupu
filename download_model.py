@@ -16,17 +16,11 @@ MODEL_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model")
 MODEL_PATH = os.path.join(MODEL_DIR, "butterfly_xception.keras")
 
 # ============================================================
-# PENTING: Ganti FILE_ID di bawah dengan ID file model kamu
-# dari Google Drive setelah kamu upload model ke Google Drive.
-#
-# Cara mendapatkan FILE_ID:
-# 1. Upload butterfly_xception.keras ke Google Drive
-# 2. Klik kanan file → "Get link" → set ke "Anyone with the link"
-# 3. Link akan seperti:
-#    https://drive.google.com/file/d/XXXXXXXXXXXXXXXXXXXXXXXX/view
-# 4. Salin bagian XXXXXXXXXXXXXXXXXXXXXXXX sebagai FILE_ID
+# File ID model dari Google Drive
+# (bisa di-override dengan environment variable MODEL_GDRIVE_FILE_ID)
 # ============================================================
-MODEL_GDRIVE_FILE_ID = os.environ.get("MODEL_GDRIVE_FILE_ID", "")
+DEFAULT_FILE_ID = "1sqmYWmUx1xBN1ECn3fBYW1jXYjAQxhr7"
+MODEL_GDRIVE_FILE_ID = os.environ.get("MODEL_GDRIVE_FILE_ID", DEFAULT_FILE_ID)
 
 
 def download_model():
