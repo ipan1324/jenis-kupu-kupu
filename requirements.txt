@@ -1,0 +1,20 @@
+# ============================================
+# Requirements - Butterfly Classification
+# Transfer Learning Xception + Flask
+# ============================================
+
+# Web Framework
+flask
+
+# Deep Learning
+tensorflow
+
+# Image Processing
+Pillow
+
+# Numerical Computing
+numpy
+scipy
+
+# Production Server (opsional untuk deploy)
+gunicorn

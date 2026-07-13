@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Klasifikasi jenis kupu-kupu menggunakan Transfer Learning Xception. Upload gambar kupu-kupu untuk mengetahui jenisnya.">
+    <title>Klasifikasi Kupu-kupu | Transfer Learning Xception</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- Animated Background Particles -->
+    <!-- ============================================ -->
+    <div class="bg-particles">
+        <div class="particle particle-1">🦋</div>
+        <div class="particle particle-2">🦋</div>
+        <div class="particle particle-3">🦋</div>
+        <div class="particle particle-4">🦋</div>
+        <div class="particle particle-5">🦋</div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Navbar -->
+    <!-- ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-butterfly"></i>
+                <span>ButterflyAI</span>
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-badge">
+                    <i class="bi bi-cpu"></i> Xception Model
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- Hero Section -->
+    <!-- ============================================ -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="hero-badge" data-aos="fade-down">
+                        <i class="bi bi-stars"></i> AI-Powered Classification
+                    </div>
+                    <h1 class="hero-title">
+                        Klasifikasi <span class="gradient-text">Kupu-kupu</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Identifikasi jenis kupu-kupu secara instan menggunakan 
+                        <strong>Transfer Learning Xception</strong>. Upload foto kupu-kupu 
+                        dan dapatkan hasil prediksi dalam hitungan detik.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- Main Content -->
+    <!-- ============================================ -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-lg-7">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show glass-alert" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Upload Card -->
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="upload-card glass-card" id="upload-card">
+
+                        <div class="card-header-custom">
+                            <div class="card-icon">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                            </div>
+                            <h2 class="card-title-custom">Upload Gambar</h2>
+                            <p class="card-desc">Pilih gambar kupu-kupu dalam format JPG, JPEG, atau PNG</p>
+                        </div>
+
+                        <form action="{{ url_for('predict_image') }}" method="POST" enctype="multipart/form-data" id="upload-form">
+                            
+                            <!-- Drop Zone -->
+                            <div class="drop-zone" id="drop-zone">
+                                <div class="drop-zone-content" id="drop-zone-content">
+                                    <div class="drop-icon">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                    <p class="drop-text">
+                                        Seret & lepas gambar di sini<br>
+                                        <span class="drop-subtext">atau klik untuk memilih file</span>
+                                    </p>
+                                    <span class="file-badge">
+                                        <i class="bi bi-file-earmark-image"></i> JPG, JPEG, PNG • Maks 10 MB
+                                    </span>
+                                </div>
+
+                                <!-- Preview Area -->
+                                <div class="preview-area" id="preview-area" style="display: none;">
+                                    <img id="preview-image" src="" alt="Preview gambar" class="preview-img">
+                                    <p class="preview-filename" id="preview-filename"></p>
+                                </div>
+
+                                <input type="file" name="file" id="file-input" 
+                                       accept=".jpg,.jpeg,.png" class="file-input" required>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-predict" id="btn-predict" disabled>
+                                <i class="bi bi-search me-2"></i>
+                                <span id="btn-text">Prediksi Sekarang</span>
+                                <div class="btn-loading" id="btn-loading" style="display: none;">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                    Memproses...
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Species Info Cards -->
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-10">
+                    <h3 class="section-title text-center mb-4">
+                        <i class="bi bi-collection me-2"></i>5 Spesies yang Dapat Diidentifikasi
+                    </h3>
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-6 col-md-4 col-lg">
+                            <div class="species-card">
+                                <div class="species-icon">👑</div>
+                                <h6 class="species-name">Monarch</h6>
+                                <small class="species-latin">Danaus plexippus</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg">
+                            <div class="species-card">
+                                <div class="species-icon">🦚</div>
+                                <h6 class="species-name">Peacock</h6>
+                                <small class="species-latin">Aglais io</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg">
+                            <div class="species-card">
+                                <div class="species-icon">🧡</div>
+                                <h6 class="species-name">Julia</h6>
+                                <small class="species-latin">Dryas iulia</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg">
+                            <div class="species-card">
+                                <div class="species-icon">🪞</div>
+                                <h6 class="species-name">Viceroy</h6>
+                                <small class="species-latin">Limenitis archippus</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg">
+                            <div class="species-card">
+                                <div class="species-icon">🦓</div>
+                                <h6 class="species-name">Zebra Long Wing</h6>
+                                <small class="species-latin">Heliconius charithonia</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="row justify-content-center mt-5 mb-4">
+                <div class="col-lg-8">
+                    <div class="tech-stack glass-card-light">
+                        <h5 class="text-center mb-3">
+                            <i class="bi bi-gear-wide-connected me-2"></i>Teknologi
+                        </h5>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <span class="tech-badge">TensorFlow</span>
+                            <span class="tech-badge">Keras</span>
+                            <span class="tech-badge">Xception</span>
+                            <span class="tech-badge">Flask</span>
+                            <span class="tech-badge">Bootstrap 5</span>
+                            <span class="tech-badge">Python 3.11</span>
+                            <span class="tech-badge">Transfer Learning</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- Footer -->
+    <!-- ============================================ -->
+    <footer class="footer-custom">
+        <div class="container text-center">
+            <p class="mb-1">
+                <i class="bi bi-butterfly me-1"></i>
+                <strong>Butterfly Classification</strong> &mdash; Transfer Learning Xception
+            </p>
+            <p class="mb-0 footer-sub">
+                Tugas Mata Kuliah AI &bull; Bab 12 Transfer Learning &bull; 2025
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS: Drag & Drop + Preview -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropZone = document.getElementById("drop-zone");
+            const fileInput = document.getElementById("file-input");
+            const previewArea = document.getElementById("preview-area");
+            const previewImage = document.getElementById("preview-image");
+            const previewFilename = document.getElementById("preview-filename");
+            const dropContent = document.getElementById("drop-zone-content");
+            const btnPredict = document.getElementById("btn-predict");
+            const btnText = document.getElementById("btn-text");
+            const btnLoading = document.getElementById("btn-loading");
+            const uploadForm = document.getElementById("upload-form");
+
+            // Klik drop zone untuk membuka file picker
+            dropZone.addEventListener("click", () => fileInput.click());
+
+            // Drag & Drop events
+            ["dragenter", "dragover"].forEach(event => {
+                dropZone.addEventListener(event, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add("drag-over");
+                });
+            });
+
+            ["dragleave", "drop"].forEach(event => {
+                dropZone.addEventListener(event, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove("drag-over");
+                });
+            });
+
+            dropZone.addEventListener("drop", (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    showPreview(files[0]);
+                }
+            });
+
+            // File input change
+            fileInput.addEventListener("change", (e) => {
+                if (e.target.files.length > 0) {
+                    showPreview(e.target.files[0]);
+                }
+            });
+
+            // Preview gambar
+            function showPreview(file) {
+                // Validasi ekstensi
+                const allowed = ["image/jpeg", "image/jpg", "image/png"];
+                if (!allowed.includes(file.type)) {
+                    alert("Format file tidak didukung. Gunakan JPG, JPEG, atau PNG.");
+                    return;
+                }
+
+                // Validasi ukuran (10 MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert("Ukuran file terlalu besar. Maksimal 10 MB.");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewFilename.textContent = file.name;
+                    dropContent.style.display = "none";
+                    previewArea.style.display = "flex";
+                    btnPredict.disabled = false;
+                    btnPredict.classList.add("active");
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Loading state saat submit
+            uploadForm.addEventListener("submit", () => {
+                btnText.style.display = "none";
+                btnLoading.style.display = "inline-flex";
+                btnPredict.disabled = true;
+            });
+        });
+    </script>
+
+</body>
+</html>

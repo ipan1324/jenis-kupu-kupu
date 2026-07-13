@@ -1,0 +1,43 @@
+# ============================================
+# .gitignore - Butterfly Classification
+# ============================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+venv/
+env/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dataset (terlalu besar untuk git)
+dataset/
+
+# Model weights (terlalu besar untuk git)
+model/*.keras
+model/*.h5
+
+# Upload files
+static/uploads/*
+!static/uploads/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Distribution
+dist/
+build/
+*.egg-info/
