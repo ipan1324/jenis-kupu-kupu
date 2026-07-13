@@ -21,6 +21,7 @@ env/
 
 # Dataset (terlalu besar untuk git)
 dataset/
+archive/
 
 # Model weights (terlalu besar untuk git)
 model/*.keras

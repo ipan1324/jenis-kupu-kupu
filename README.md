@@ -151,8 +151,8 @@ butterfly-classification/
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/username/butterfly-classification.git
-cd butterfly-classification
+git clone https://github.com/ipan1324/jenis-kupu-kupu.git
+cd jenis-kupu-kupu
 ```
 
 ### 2. Buat Virtual Environment
@@ -182,20 +182,22 @@ pip install -r requirements.txt
 
 ## 📦 Persiapan Dataset
 
-### Download dari Kaggle
+### ☁️ Download Dataset (Google Drive)
 
-1. Buka halaman dataset: [Butterfly Image Classification](https://www.kaggle.com/datasets/phucthaiv02/butterfly-image-classification)
-2. Download dataset
-3. Ekstrak dan pilih **hanya 5 kelas** berikut:
-   - `Julia`
-   - `Monarch`
-   - `Peacock`
-   - `Viceroy`
-   - `Zebra Long Wing`
+Dataset telah tersedia di Google Drive dan dapat diunduh langsung:
+
+> **[📥 Download Dataset Kupu-kupu — Google Drive](https://drive.google.com/drive/folders/1ZlPvmMqYRTwMPEXGyy0Oug5b26vohowz?usp=sharing)**
+
+Dataset mencakup 5 kelas kupu-kupu:
+- `Julia`
+- `Monarch`
+- `Peacock`
+- `Viceroy`
+- `Zebra Long Wing`
 
 ### Struktur Dataset
 
-Susun dataset ke dalam struktur berikut:
+Setelah download, susun dataset ke dalam struktur berikut:
 
 ```
 dataset/
@@ -220,6 +222,8 @@ dataset/
 ```
 
 > **Tip:** Jika dataset hanya memiliki folder `train` dan `test`, Anda bisa membagi folder `train` secara manual (80% train, 20% validation).
+
+> **Catatan:** Folder `archive/` dan `dataset/` tidak disertakan di repository ini karena ukurannya yang besar. Gunakan link Google Drive di atas.
 
 ---
 
@@ -297,7 +301,7 @@ python-3.11.9
 git init
 git add .
 git commit -m "Initial commit - Butterfly Classification"
-git remote add origin https://github.com/username/butterfly-classification.git
+git remote add origin https://github.com/ipan1324/jenis-kupu-kupu.git
 git push -u origin main
 ```
 
@@ -312,7 +316,7 @@ git push -u origin main
    - **Instance Type:** Free atau Starter
 5. Klik **"Create Web Service"**
 
-> **Catatan:** Pastikan file model (`butterfly_xception.keras`) sudah di-include atau gunakan Git LFS untuk file besar.
+> **Catatan:** File model (`butterfly_xception.keras`) tidak disertakan di repository ini karena ukurannya yang besar (±86 MB). Lakukan training ulang menggunakan `python train.py` setelah dataset didownload, atau minta akses model secara terpisah.
 
 ---
 
